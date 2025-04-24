@@ -1,0 +1,11 @@
+{
+"rules": [
+{
+"primary-output": "CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o",
+"requires": [
+]
+}
+],
+"version": 0,
+"revision": 0
+}
