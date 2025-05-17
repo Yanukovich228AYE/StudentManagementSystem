@@ -1,5 +1,5 @@
-#ifndef ENTITY_H
-#define ENTITY_H
+#ifndef USER_H
+#define USER_H
 
 #include <string>
 #include <vector>
@@ -59,4 +59,4 @@ public:
     }
 };
 
-#endif //ENTITY_H
+#endif //USER_H
