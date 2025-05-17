@@ -15,7 +15,9 @@
 	"include-dirs" : 
 	[
 		"/usr/include/mysql",
-		"/home/nikita/CLionProjects/StudentManagementSystem/include"
+		"/usr/include/openssl",
+		"/home/nikita/CLionProjects/StudentManagementSystem/include",
+		"/usr/include/soci"
 	],
 	"language" : "CXX",
 	"linked-target-dirs" : [],
