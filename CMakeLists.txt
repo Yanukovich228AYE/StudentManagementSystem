@@ -18,7 +18,9 @@ add_executable(StudentManagementSystem src/main.cpp
         include/User.h
         src/auth.h
         include/libs.h
-        src/auth.cpp)
+        src/auth.cpp
+        src/management.cpp
+        src/management.h)
 
 target_link_libraries(StudentManagementSystem
         mariadb

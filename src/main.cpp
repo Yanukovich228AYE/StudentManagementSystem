@@ -1,6 +1,9 @@
+
+// main.cpp (updated)
 #include "db.h"
 #include "auth.h"
 #include "User.h"
+#include "management.h"  // Add this line
 #include <iostream>
 
 int main() {
@@ -10,6 +13,12 @@ int main() {
 
         std::cout << "Connected to DB\n";
 
+        // Then create fresh tables
+        User temp_user;
+        if (!create_table(*db, "test", "users", temp_user.get_schema())) {
+            return 1;
+        }
+
         while (true) {
             std::cout << "\n1. Register\n2. Login\n3. Exit\nChoice: ";
             int choice;
@@ -17,7 +26,7 @@ int main() {
 
             if (choice == 1) {
                 std::string name, password, role_str;
-                std::optional<float> gpa;
+                std::optional<double> gpa;
                 std::optional<std::string> subject;
 
                 std::cout << "Enter username: ";
@@ -29,25 +38,32 @@ int main() {
                 UserRole role = User::string_to_role(role_str);
 
                 if (role == Student) {
-                    float g;
+                    double g;
                     std::cout << "Enter GPA: ";
                     std::cin >> g;
                     gpa = g;
+                    subject = std::nullopt;
                 } else if (role == Teacher) {
                     std::string subj;
                     std::cout << "Enter subject: ";
                     std::cin >> subj;
                     subject = subj;
+                    gpa = std::nullopt;
                 }
 
                 User new_user(-1, name, password, gpa, subject, role);
                 if (register_user(*db, new_user)) {
                     std::cout << "User registered successfully!\n";
                 } else {
-                    std::cout << "Registration failed.\n";
+                    // Check if it's a duplicate error
+                    auto existing = search_db(*db, "users", "name", new_user.get_name());
+                    if (existing) {
+                        std::cout << "Registration failed: Username already exists.\n";
+                    } else {
+                        std::cout << "Registration failed for unknown reason.\n";
+                    }
                 }
             }
-
             else if (choice == 2) {
                 std::string name, password;
                 std::cout << "Enter username: ";
@@ -62,23 +78,21 @@ int main() {
 
                     switch (user.get_role()) {
                         case Admin:
-                            std::cout << "[ADMIN] You can manage all users.\n";
+                            admin_menu(*db, user);
                             break;
                         case Teacher:
-                            std::cout << "[TEACHER] You can view/edit students.\n";
+                            teacher_menu(*db, user);
                             break;
                         case Student:
-                            std::cout << "[STUDENT] Your GPA: " << (user.get_gpa().has_value() ? std::to_string(user.get_gpa().value()) : "N/A") << "\n";
+                            student_menu(*db, user);
                             break;
                         default:
                             std::cout << "Unknown role.\n";
                     }
-
                 } else {
                     std::cout << "Login failed.\n";
                 }
             }
-
             else if (choice == 3) {
                 break;
             }

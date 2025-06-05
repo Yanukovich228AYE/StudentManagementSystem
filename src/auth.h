@@ -2,6 +2,7 @@
 #define AUTH_H
 
 #include "libs.h"
+#include "User.h"
 
 bool register_user(soci::session& db, const User& user);
 std::optional<User> login_user(soci::session& db, const std::string& name, const std::string& password);

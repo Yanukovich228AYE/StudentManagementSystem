@@ -151,13 +151,14 @@ CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o.ddi: \
  /usr/include/c++/15.1.1/bits/locale_facets.tcc \
  /usr/include/c++/15.1.1/bits/basic_ios.tcc \
  /usr/include/c++/15.1.1/bits/ostream.tcc /usr/include/c++/15.1.1/istream \
- /usr/include/c++/15.1.1/bits/istream.tcc /usr/include/mysql/mysql.h \
- /usr/include/mysql/mariadb_com.h /usr/include/mysql/mariadb_version.h \
- /usr/include/mysql/ma_list.h /usr/include/mysql/mariadb_ctype.h \
- /usr/include/mysql/mariadb_stmt.h /usr/include/openssl/sha.h \
- /usr/include/openssl/macros.h /usr/include/openssl/opensslconf.h \
- /usr/include/openssl/configuration.h /usr/include/openssl/opensslv.h \
- /usr/include/openssl/e_os2.h \
+ /usr/include/c++/15.1.1/bits/istream.tcc \
+ /home/nikita/CLionProjects/StudentManagementSystem/include/libs.h \
+ /usr/include/mysql/mysql.h /usr/include/mysql/mariadb_com.h \
+ /usr/include/mysql/mariadb_version.h /usr/include/mysql/ma_list.h \
+ /usr/include/mysql/mariadb_ctype.h /usr/include/mysql/mariadb_stmt.h \
+ /usr/include/openssl/sha.h /usr/include/openssl/macros.h \
+ /usr/include/openssl/opensslconf.h /usr/include/openssl/configuration.h \
+ /usr/include/openssl/opensslv.h /usr/include/openssl/e_os2.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/stdint-uintn.h \
  /usr/include/bits/stdint-least.h /usr/include/c++/15.1.1/algorithm \
@@ -259,7 +260,7 @@ CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o.ddi: \
  /usr/include/soci/mysql/soci-mysql.h \
  /usr/include/soci/trivial-blob-backend.h /usr/include/mysql/mysql.h \
  /usr/include/mysql/errmsg.h \
- /home/nikita/CLionProjects/StudentManagementSystem/include/Entity.h \
- /home/nikita/CLionProjects/StudentManagementSystem/include/student.h \
- /home/nikita/CLionProjects/StudentManagementSystem/include/Entity.h \
- /home/nikita/CLionProjects/StudentManagementSystem/include/teacher.h
+ /home/nikita/CLionProjects/StudentManagementSystem/include/User.h \
+ /home/nikita/CLionProjects/StudentManagementSystem/include/libs.h \
+ /home/nikita/CLionProjects/StudentManagementSystem/src/auth.h \
+ /home/nikita/CLionProjects/StudentManagementSystem/src/management.h

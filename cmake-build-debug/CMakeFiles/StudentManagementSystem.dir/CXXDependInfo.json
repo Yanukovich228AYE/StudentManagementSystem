@@ -38,6 +38,11 @@
 		{
 			"language" : "CXX",
 			"source" : "/home/nikita/CLionProjects/StudentManagementSystem/src/main.cpp"
+		},
+		"CMakeFiles/StudentManagementSystem.dir/src/management.cpp.o" : 
+		{
+			"language" : "CXX",
+			"source" : "/home/nikita/CLionProjects/StudentManagementSystem/src/management.cpp"
 		}
 	}
 }

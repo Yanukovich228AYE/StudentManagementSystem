@@ -14,6 +14,5 @@
 #include <vector>
 #include <soci/soci.h>
 #include <soci/mysql/soci-mysql.h>
-#include "User.h"
 
 #endif //LIBS_H

@@ -5,6 +5,8 @@
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 0 "<command-line>" 2
 # 1 "/home/nikita/CLionProjects/StudentManagementSystem/src/main.cpp"
+
+
 # 1 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 1
 
 
@@ -43421,6 +43423,14 @@ namespace std __attribute__ ((__visibility__ ("default")))
 
 }
 # 5 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 1 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 1
+
+
+
+
+
+
+
 # 1 "/usr/include/mysql/mysql.h" 1 3 4
 # 25 "/usr/include/mysql/mysql.h" 3 4
 extern "C" {
@@ -44697,7 +44707,7 @@ struct st_mariadb_methods {
 };
 # 940 "/usr/include/mysql/mysql.h" 3 4
 }
-# 6 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 9 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
 # 1 "/usr/include/openssl/sha.h" 1 3 4
 # 12 "/usr/include/openssl/sha.h" 3 4
         
@@ -44890,7 +44900,7 @@ unsigned char *SHA512(const unsigned char *d, size_t n, unsigned char *md);
 
 
 }
-# 7 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 10 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
 # 1 "/usr/include/c++/15.1.1/algorithm" 1 3
 # 63 "/usr/include/c++/15.1.1/algorithm" 3
 # 1 "/usr/include/c++/15.1.1/bits/stl_algo.h" 1 3
@@ -55667,7 +55677,7 @@ lexicographical_compare(_ExecutionPolicy&& __exec, _ForwardIterator1 __first1, _
 
 }
 # 90 "/usr/include/c++/15.1.1/algorithm" 2 3
-# 8 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 11 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
 # 1 "/usr/include/c++/15.1.1/iomanip" 1 3
 # 40 "/usr/include/c++/15.1.1/iomanip" 3
 #pragma GCC diagnostic push
@@ -61811,7 +61821,7 @@ namespace std __attribute__ ((__visibility__ ("default")))
 }
 
 #pragma GCC diagnostic pop
-# 9 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 12 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
 
 # 1 "/usr/include/c++/15.1.1/cstring" 1 3
 # 47 "/usr/include/c++/15.1.1/cstring" 3
@@ -62282,7 +62292,7 @@ namespace std __attribute__ ((__visibility__ ("default")))
 
 }
 }
-# 11 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 14 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
 # 1 "/usr/include/c++/15.1.1/vector" 1 3
 # 67 "/usr/include/c++/15.1.1/vector" 3
 # 1 "/usr/include/c++/15.1.1/bits/stl_uninitialized.h" 1 3
@@ -67241,7 +67251,7 @@ namespace std __attribute__ ((__visibility__ ("default")))
     }
 
 }
-# 12 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 15 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
 # 1 "/usr/include/soci/soci.h" 1 3 4
 # 12 "/usr/include/soci/soci.h" 3 4
 # 1 "/usr/include/soci/soci-platform.h" 1 3 4
@@ -93471,7 +93481,7 @@ struct type_conversion<std::optional<T> >
 
 }
 # 61 "/usr/include/soci/soci.h" 2 3 4
-# 13 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 16 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
 # 1 "/usr/include/soci/mysql/soci-mysql.h" 1 3 4
 # 21 "/usr/include/soci/mysql/soci-mysql.h" 3 4
 # 1 "/usr/include/soci/trivial-blob-backend.h" 1 3 4
@@ -93847,138 +93857,230 @@ __attribute__ (( visibility("default") )) void register_factory_mysql();
 }
 
 }
-# 14 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
-# 1 "/home/nikita/CLionProjects/StudentManagementSystem/include/Entity.h" 1
+# 17 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 2
+# 6 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+# 1 "/home/nikita/CLionProjects/StudentManagementSystem/include/User.h" 1
 
 
 
+# 1 "/home/nikita/CLionProjects/StudentManagementSystem/include/libs.h" 1
+# 5 "/home/nikita/CLionProjects/StudentManagementSystem/include/User.h" 2
 
 
-
-
-
-# 8 "/home/nikita/CLionProjects/StudentManagementSystem/include/Entity.h"
-class Entity {
-public:
-    virtual ~Entity() = default;
-
-    virtual std::vector<std::string> get_columns() const = 0;
-    virtual std::vector<std::string> get_values() const = 0;
-    virtual std::vector<std::pair<std::string, std::string>> get_schema() const = 0;
-};
-
+# 6 "/home/nikita/CLionProjects/StudentManagementSystem/include/User.h"
 enum UserRole {
     Student = 0,
     Teacher = 1,
     Admin = 2,
     Unknown = -1
 };
-# 15 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
 
-bool login(MYSQL *conn);
+class User {
+private:
+    int id = -1;
+    std::string name;
+    std::string password;
+    std::optional<double> gpa;
+    std::optional<std::string> subject;
+    UserRole role;
+
+public:
+    User(int id = -1,
+     std::string name = "",
+     std::string password = "",
+     std::optional<double> gpa = std::nullopt,
+     std::optional<std::string> subject = std::nullopt,
+     UserRole role = Unknown)
+    : id(id), name(std::move(name)), password(std::move(password)),
+      gpa(gpa), subject(subject), role(role) {}
+
+
+    const std::string& get_name() const { return name; }
+    const std::string& get_password() const { return password; }
+    std::optional<double> get_gpa() const { return gpa; }
+    std::optional<std::string> get_subject() const { return subject; }
+    UserRole get_role() const { return role; }
+
+    void set_id(int new_id) { id = new_id; }
+    int get_id() const { return id; }
+
+    static std::vector<std::string> get_insertable_columns() {
+        return {"name", "password", "gpa", "subject", "role"};
+    }
+
+    std::vector<std::string> get_insertable_values() const {
+        return {
+            name,
+            password,
+            gpa.has_value() ? std::to_string(gpa.value()) : "",
+            subject.has_value() ? subject.value() : "",
+            std::to_string(static_cast<int>(role))
+        };
+    }
+
+
+    std::vector<std::pair<std::string, std::string>> get_schema() const {
+        return {
+            {"id", "INT PRIMARY KEY AUTO_INCREMENT"},
+            {"name", "VARCHAR(50) NOT NULL"},
+            {"password", "VARCHAR(256) NOT NULL"},
+            {"gpa", "FLOAT"},
+            {"subject", "VARCHAR(50)"},
+            {"role", "INT NOT NULL"}
+        };
+    }
+
+    static std::string role_to_string(UserRole role) {
+        switch (role) {
+            case Student: return "Student";
+            case Teacher: return "Teacher";
+            case Admin: return "Admin";
+            default: return "Unknown";
+        }
+    }
+
+    static UserRole string_to_role(const std::string& str) {
+        if (str == "Student" || str == "student") return Student;
+        if (str == "Teacher" || str == "teacher") return Teacher;
+        if (str == "Admin" || str == "admin") return Admin;
+        return Unknown;
+    }
+};
+# 7 "/home/nikita/CLionProjects/StudentManagementSystem/src/db.h" 2
+
+bool login();
 bool registration();
 void main_screen();
 
 std::unique_ptr<soci::session> connect_to_db(const std::string& host, const std::string& user, const std::string& password, const std::string& database);
-bool clear_all_tables(soci::session& db, const std::string dbname);
-bool drop_tables(MYSQL* conn);
-void close_db(MYSQL* conn);
+std::optional<User> search_db(soci::session& db, const std::string& table_name, const std::string& key, const std::string& value);
 
+bool insert_user(soci::session& db, const std::string& table_name, const User& user);
 
+bool create_table(soci::session& db, const std::string& dbname, const std::string& table_name, const std::vector<std::pair<std::string, std::string>>& columns);
+bool clear_all_tables(soci::session& db, const std::string& dbname);
+bool drop_tables(soci::session& db, const std::string& dbname);
 
-bool create_table(MYSQL *conn, const std::string& table_name, const std::vector<std::pair<std::string, std::string>>& columns);
-bool insert_entity(MYSQL *conn, const std::string &table_name, const Entity &entity);
-std::vector<std::string> search_db(MYSQL *conn, const std::vector<std::pair<std::string, std::string>> &parameters, const std::vector<std::string> &tables_to_search);
-
-void print(MYSQL* conn, const std::string &table_name, std::vector<std::pair<std::string, std::string>> schema);
-std::string hash(std::string str);
-# 2 "/home/nikita/CLionProjects/StudentManagementSystem/src/main.cpp" 2
-# 1 "/home/nikita/CLionProjects/StudentManagementSystem/include/student.h" 1
-
-
-
-# 1 "/home/nikita/CLionProjects/StudentManagementSystem/include/Entity.h" 1
-# 5 "/home/nikita/CLionProjects/StudentManagementSystem/include/student.h" 2
-
-class Student : public Entity {
-private:
-    std::string name;
-    std::string password;
-    float gpa;
-    UserRole role;
-
-public:
-    Student(const std::string &name, const std::string &password, const float gpa, const UserRole role)
-        : name(name), password(password), gpa(gpa), role(role) {}
-
-
-    std::vector<std::string> get_columns() const override {
-        return {"name", "password", "gpa", "privilege"};
-    }
-
-    std::vector<std::string> get_values() const override {
-        return {name, password, std::to_string(gpa), std::to_string(static_cast<int>(role))};
-    }
-
-    std::vector<std::pair<std::string, std::string>> get_schema() const override {
-        return {
-                {"id", "INT PRIMARY KEY AUTO_INCREMENT"},
-                {"name", "VARCHAR(50) NOT NULL UNIQUE"},
-                {"password", "VARCHAR(256) NOT NULL"},
-                {"gpa", "FLOAT NOT NULL"},
-                {"privilege", "INT NOT NULL"}
-        };
-    }
-};
-# 3 "/home/nikita/CLionProjects/StudentManagementSystem/src/main.cpp" 2
-# 1 "/home/nikita/CLionProjects/StudentManagementSystem/include/teacher.h" 1
-
-
-
-
-
-class Teacher : public Entity {
-private:
-    std::string name;
-    std::string password;
-    float salary;
-    UserRole role;
-
-public:
-    Teacher(const std::string &name, const std::string &password, const float salary, const UserRole role)
-        : name(name), password(password), salary(salary), role(role) {}
-
-
-    std::vector<std::string> get_columns() const override {
-        return {"name", "password", "salary", "privilege"};
-    }
-
-    std::vector<std::string> get_values() const override {
-        return {name, password, std::to_string(salary), std::to_string(static_cast<int>(role))};
-    }
-
-    std::vector<std::pair<std::string, std::string>> get_schema() const override {
-        return {
-                    {"id", "INT PRIMARY KEY AUTO_INCREMENT"},
-                    {"name", "VARCHAR(50) NOT NULL UNIQUE"},
-                    {"password", "VARCHAR(256) NOT NULL"},
-                    {"salary", "FLOAT NOT NULL"},
-                    {"privilege", "INT NOT NULL"}
-        };
-    }
-};
+void print_table(soci::session& db, const std::string& table_name);
+std::string hash(const std::string& str);
 # 4 "/home/nikita/CLionProjects/StudentManagementSystem/src/main.cpp" 2
+# 1 "/home/nikita/CLionProjects/StudentManagementSystem/src/auth.h" 1
+
+
+
+
+
+
+bool register_user(soci::session& db, const User& user);
+std::optional<User> login_user(soci::session& db, const std::string& name, const std::string& password);
+# 5 "/home/nikita/CLionProjects/StudentManagementSystem/src/main.cpp" 2
+
+# 1 "/home/nikita/CLionProjects/StudentManagementSystem/src/management.h" 1
+# 10 "/home/nikita/CLionProjects/StudentManagementSystem/src/management.h"
+void print_users(soci::session& db, const User& current_user);
+bool add_user(soci::session& db, const User& current_user);
+bool remove_user(soci::session& db, const User& current_user);
+void admin_menu(soci::session& db, User& admin);
+void teacher_menu(soci::session& db, User& teacher);
+void student_menu(soci::session& db, User& student);
+# 7 "/home/nikita/CLionProjects/StudentManagementSystem/src/main.cpp" 2
+
 
 int main() {
     try {
-        std::unique_ptr<soci::session> db = connect_to_db("localhost", "root", "root", "test");
-        if (!db)
-            return 1;
-        std::cout << "successfully connected to the database" << std::endl;
+        auto db = connect_to_db("localhost", "root", "root", "test");
+        if (!db) return 1;
 
-        clear_all_tables(*db, "test");
+        std::cout << "Connected to DB\n";
+
+
+        User temp_user;
+        if (!create_table(*db, "test", "users", temp_user.get_schema())) {
+            return 1;
+        }
+
+        while (true) {
+            std::cout << "\n1. Register\n2. Login\n3. Exit\nChoice: ";
+            int choice;
+            std::cin >> choice;
+
+            if (choice == 1) {
+                std::string name, password, role_str;
+                std::optional<double> gpa;
+                std::optional<std::string> subject;
+
+                std::cout << "Enter username: ";
+                std::cin >> name;
+                std::cout << "Enter password: ";
+                std::cin >> password;
+                std::cout << "Enter role (student/teacher/admin): ";
+                std::cin >> role_str;
+                UserRole role = User::string_to_role(role_str);
+
+                if (role == Student) {
+                    double g;
+                    std::cout << "Enter GPA: ";
+                    std::cin >> g;
+                    gpa = g;
+                    subject = std::nullopt;
+                } else if (role == Teacher) {
+                    std::string subj;
+                    std::cout << "Enter subject: ";
+                    std::cin >> subj;
+                    subject = subj;
+                    gpa = std::nullopt;
+                }
+
+                User new_user(-1, name, password, gpa, subject, role);
+                if (register_user(*db, new_user)) {
+                    std::cout << "User registered successfully!\n";
+                } else {
+
+                    auto existing = search_db(*db, "users", "name", new_user.get_name());
+                    if (existing) {
+                        std::cout << "Registration failed: Username already exists.\n";
+                    } else {
+                        std::cout << "Registration failed for unknown reason.\n";
+                    }
+                }
+            }
+            else if (choice == 2) {
+                std::string name, password;
+                std::cout << "Enter username: ";
+                std::cin >> name;
+                std::cout << "Enter password: ";
+                std::cin >> password;
+
+                auto user_opt = login_user(*db, name, password);
+                if (user_opt) {
+                    User user = *user_opt;
+                    std::cout << "Welcome back, " << user.get_name() << "!\n";
+
+                    switch (user.get_role()) {
+                        case Admin:
+                            admin_menu(*db, user);
+                            break;
+                        case Teacher:
+                            teacher_menu(*db, user);
+                            break;
+                        case Student:
+                            student_menu(*db, user);
+                            break;
+                        default:
+                            std::cout << "Unknown role.\n";
+                    }
+                } else {
+                    std::cout << "Login failed.\n";
+                }
+            }
+            else if (choice == 3) {
+                break;
+            }
+        }
+
     } catch (const std::exception& e) {
-        std::cerr << "Connection failed: " << e.what() << std::endl;
+        std::cerr << "Exception: " << e.what() << "\n";
     }
+
     return 0;
 }

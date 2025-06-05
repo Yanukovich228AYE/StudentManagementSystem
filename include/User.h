@@ -20,8 +20,6 @@ private:
     UserRole role;
 
 public:
-    User() = default; // tell the compiler to generate desctructor automatically
-
     User(int id = -1,
      std::string name = "",
      std::string password = "",
@@ -41,29 +39,29 @@ public:
     void set_id(int new_id) { id = new_id; }
     int get_id() const { return id; }
 
-    std::vector<std::string> get_columns() const {
-        return {"id", "name", "password", "gpa", "subject", "role"};
+    static std::vector<std::string> get_insertable_columns() {
+        return {"name", "password", "gpa", "subject", "role"};
     }
 
-    std::vector<std::string> get_values() const {
+    std::vector<std::string> get_insertable_values() const {
         return {
-            std::to_string(id),
             name,
             password,
-            gpa.has_value() ? std::to_string(gpa.value()) : "NULL",
-            subject.has_value() ? subject.value() : "NULL",
+            gpa.has_value() ? std::to_string(gpa.value()) : "",
+            subject.has_value() ? subject.value() : "",
             std::to_string(static_cast<int>(role))
         };
     }
 
+
     std::vector<std::pair<std::string, std::string>> get_schema() const {
         return {
-                {"id", "INT PRIMARY KEY AUTO_INCREMENT"},
-                {"name", "VARCHAR(50) NOT NULL UNIQUE"},
-                {"password", "VARCHAR(256) NOT NULL"},
-                {"gpa", "FLOAT"}, // can be null for teachers/admins
-                {"subject", "VARCHAR(50)"}, // can be null for students/admins
-                {"role", "INT NOT NULL"}
+            {"id", "INT PRIMARY KEY AUTO_INCREMENT"},
+            {"name", "VARCHAR(50) NOT NULL"},
+            {"password", "VARCHAR(256) NOT NULL"},
+            {"gpa", "FLOAT"},
+            {"subject", "VARCHAR(50)"},
+            {"role", "INT NOT NULL"}
         };
     }
 

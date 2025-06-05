@@ -1,12 +1,12 @@
 #include "libs.h"
 #include "db.h"
-#include "auth.h"
+#include "User.h"
 
 std::optional<User> search_db(soci::session& db, const std::string& table_name, const std::string& key, const std::string& value) {
     try {
         // Validate column using User::get_columns()
         User temp_user;
-        const auto& valid_columns = temp_user.get_columns();
+        const auto& valid_columns = temp_user.get_insertable_columns();
         if (std::find(valid_columns.begin(), valid_columns.end(), key) == valid_columns.end()) {
             throw std::invalid_argument("Invalid search key: " + key);
         }
@@ -58,71 +58,74 @@ std::optional<User> search_db(soci::session& db, const std::string& table_name, 
 
 bool insert_user(soci::session& db, const std::string& table_name, const User& user) {
     try {
-        std::vector<std::string> cols = user.get_columns();
-        std::vector<std::string> values = user.get_values();
-
-        if (cols.size() != values.size()) {
-            std::cerr << "Values don't match columns\n";
-            return false;
-        }
+        // Get columns and values without 'id' since it's auto-incremented
+        auto columns = user.get_insertable_columns();
+        auto values = user.get_insertable_values();
 
         std::string query = "INSERT INTO " + table_name + " (";
-        for (size_t i = 0; i < cols.size(); ++i) {
-            query += cols[i];
-            if (i < cols.size() - 1) query += ", ";
+        for (size_t i = 0; i < columns.size(); ++i) {
+            query += columns[i];
+            if (i < columns.size() - 1) query += ", ";
         }
         query += ") VALUES (";
-        for (size_t i = 0; i < cols.size(); ++i) {
-            query += "?";
-            if (i < cols.size() - 1) query += ", ";
+        for (size_t i = 0; i < columns.size(); ++i) {
+            query += ":" + columns[i];
+            if (i < columns.size() - 1) query += ", ";
         }
         query += ")";
 
         soci::statement st = (db.prepare << query);
 
-        // Create vector of std::string references to bind
-        std::vector<std::reference_wrapper<const std::string>> refs;
-        for (auto& val : values) {
-            refs.push_back(std::cref(val));
-        }
+        // Bind parameters in the correct order
+        // Note: The order must match the columns in get_insertable_columns()
+        st.exchange(soci::use(values[0], "name"));
+        st.exchange(soci::use(values[1], "password"));
 
-        // Bind positionally
-        for (const auto& val_ref : refs) {
-            st.exchange(soci::use(val_ref.get()));
-        }
+        // Handle optional gpa
+        soci::indicator gpa_ind = user.get_gpa().has_value() ? soci::i_ok : soci::i_null;
+        double gpa_value = user.get_gpa().value_or(0.0);
+        st.exchange(soci::use(gpa_value, gpa_ind, "gpa"));
+
+        // Handle optional subject
+        soci::indicator subject_ind = user.get_subject().has_value() ? soci::i_ok : soci::i_null;
+        std::string subject_value = user.get_subject().value_or("");
+        st.exchange(soci::use(subject_value, subject_ind, "subject"));
+
+        // Role is always required
+        int role_value = static_cast<int>(user.get_role());
+        st.exchange(soci::use(role_value, "role"));
 
         st.define_and_bind();
-        st.execute(true);
+        st.execute(true);  // Execute the statement
 
-        std::cout << "User \"" << user.get_name() << "\" inserted into `" << table_name << "` successfully.\n";
         return true;
-
-    } catch (const soci::soci_error& e) {
-        std::cerr << "SOCI error inserting user into table `" << table_name << "`: " << e.what() << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "Standard error inserting user into table `" << table_name << "`: " << e.what() << std::endl;
+        std::cerr << "Error inserting user: " << e.what() << std::endl;
+        return false;
     }
-
-    return false;
 }
 
 
-
-bool create_table(soci::session& db, const std::string& dbname, const std::string& table_name, const std::vector<std::pair<std::string, std::string>>& columns) {
+bool create_table(soci::session& db, const std::string& dbname, const std::string& table_name,
+                 const std::vector<std::pair<std::string, std::string>>& columns) {
     try {
         if (columns.empty()) {
             std::cerr << "No columns provided for table: " << table_name << std::endl;
             return false;
         }
 
-        std::string query = "CREATE TABLE IF NOT EXISTS `" + dbname + "`.`" + table_name + "`";
+        std::string query = "CREATE TABLE IF NOT EXISTS `" + dbname + "`.`" + table_name + "` (";
 
-        for (int i = 0; i < columns.size(); i++) {
-            query += (i == 0 ? " (" : ", ") + columns[i].first + " " + columns[i].second;
-            if (i == columns.size() - 1) query += ")";
+        for (size_t i = 0; i < columns.size(); ++i) {
+            query += columns[i].first + " " + columns[i].second;
+            if (i < columns.size() - 1) {
+                query += ", ";
+            }
         }
-        query += ")";
 
+        query += ")";  // Single closing parenthesis
+
+        std::cout << "Executing query: " << query << std::endl;  // Debug output
         db << query;
         std::cout << "Created table " << table_name << std::endl;
         return true;
@@ -183,7 +186,7 @@ bool clear_all_tables(soci::session& db, const std::string& dbname) {
     return false;
 }
 
-bool drop_tables(soci::session db, const std::string& dbname) {
+bool drop_tables(soci::session& db, const std::string& dbname) {
     try {
         soci::row row;
         soci::statement st = (db.prepare <<

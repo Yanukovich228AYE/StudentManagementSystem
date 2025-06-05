@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "libs.h"
+#include "User.h"
 
 bool login();
 bool registration();
@@ -11,7 +12,7 @@ void main_screen();
 std::unique_ptr<soci::session> connect_to_db(const std::string& host, const std::string& user, const std::string& password, const std::string& database);
 std::optional<User> search_db(soci::session& db, const std::string& table_name, const std::string& key, const std::string& value);
 
-bool insert_user(soci::session& db, const std::string& dbname, const User& user);
+bool insert_user(soci::session& db, const std::string& table_name, const User& user);
 
 bool create_table(soci::session& db, const std::string& dbname, const std::string& table_name, const std::vector<std::pair<std::string, std::string>>& columns);
 bool clear_all_tables(soci::session& db, const std::string& dbname);

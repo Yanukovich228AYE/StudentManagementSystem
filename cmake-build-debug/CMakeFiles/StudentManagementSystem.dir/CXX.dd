@@ -3,3 +3,7 @@ build CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o: dyndep
 
 build CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o: dyndep
 
+build CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o: dyndep
+
+build CMakeFiles/StudentManagementSystem.dir/src/management.cpp.o: dyndep
+

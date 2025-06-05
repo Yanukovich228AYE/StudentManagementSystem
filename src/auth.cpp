@@ -1,6 +1,7 @@
 #include "libs.h"
 #include "auth.h"
 #include "db.h"
+#include "User.h"
 
 bool register_user(soci::session& db, const User& user) {
     User hashed(
@@ -33,15 +34,13 @@ std::optional<User> login_user(soci::session& db, const std::string& name, const
             soci::use(name, "name")  // Explicitly name the parameter
         );
 
-        st.execute(true);
-
-        if (!st.fetch()) {
-            return std::nullopt;  // No user found
+        if (!st.execute(true)) {
+            return std::nullopt;
         }
 
         // Compare hashed input with stored hash
         if (db_password == hash(password)) {
-            std::optional<float> opt_gpa;
+            std::optional<double> opt_gpa;
             std::optional<std::string> opt_subject;
 
             if (gpa_ind == soci::i_ok) opt_gpa = gpa;
