@@ -48,11 +48,11 @@ public:
     std::vector<std::string> get_values() const {
         return {
             std::to_string(id),
-            "'" + name + "'",
-            "'" + password + "'",
+            name,
+            password,
             gpa.has_value() ? std::to_string(gpa.value()) : "NULL",
-            subject.has_value() ?  "'" + subject.value() + "'" : "NULL",
-            "'" + std::to_string(static_cast<int>(role)) + "'"
+            subject.has_value() ? subject.value() : "NULL",
+            std::to_string(static_cast<int>(role))
         };
     }
 
