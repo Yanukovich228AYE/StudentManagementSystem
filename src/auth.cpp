@@ -15,10 +15,11 @@ bool register_user(soci::session& db, const User& user) {
 
 
 std::optional<User> login_user(soci::session& db, const std::string& name, const std::string& password) {
-    int id, role_int;
-    std::string db_password; // This stores the hashed password from DB
+    int id = -1;
+    int role_int = -1;
+    std::string db_password;
     soci::indicator gpa_ind, subject_ind;
-    float gpa;
+    double gpa = 0.0f;
     std::string subject;
 
     try {
@@ -29,10 +30,14 @@ std::optional<User> login_user(soci::session& db, const std::string& name, const
             soci::into(role_int),
             soci::into(gpa, gpa_ind),
             soci::into(subject, subject_ind),
-            soci::use(name)
+            soci::use(name, "name")  // Explicitly name the parameter
         );
 
         st.execute(true);
+
+        if (!st.fetch()) {
+            return std::nullopt;  // No user found
+        }
 
         // Compare hashed input with stored hash
         if (db_password == hash(password)) {
@@ -42,9 +47,7 @@ std::optional<User> login_user(soci::session& db, const std::string& name, const
             if (gpa_ind == soci::i_ok) opt_gpa = gpa;
             if (subject_ind == soci::i_ok) opt_subject = subject;
 
-            // Return user with hashed password (not the plaintext one)
-            User user(id, name, db_password, opt_gpa, opt_subject, static_cast<UserRole>(role_int));
-            return user;
+            return User(id, name, db_password, opt_gpa, opt_subject, static_cast<UserRole>(role_int));
         }
     } catch (const std::exception& e) {
         std::cerr << "Login failed: " << e.what() << std::endl;
