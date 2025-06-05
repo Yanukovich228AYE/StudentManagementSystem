@@ -1,99 +1,112 @@
+#include "libs.h"
 #include "db.h"
+#include "auth.h"
 
-bool insert_entity(MYSQL *conn, const std::string &table_name, const User &entity) {
-    std::string query = "INSERT INTO " + table_name + " (";
+std::optional<User> search_db(soci::session& db, const std::string& table_name, const std::string& key, const std::string& value) {
+    try {
+        // Validate column using User::get_columns()
+        User temp_user;
+        const auto& valid_columns = temp_user.get_columns();
+        if (std::find(valid_columns.begin(), valid_columns.end(), key) == valid_columns.end()) {
+            throw std::invalid_argument("Invalid search key: " + key);
+        }
 
-    std::vector<std::string> columns = entity.get_columns();
-    for (size_t i = 0; i < columns.size(); i++) {
-        query += columns[i];
-        if (i != columns.size() - 1)
-            query += ", ";
+        if (table_name != "users") {
+            throw std::invalid_argument("Invalid table name");
+        }
+
+        int uid;
+        std::string uname, upass;
+        double ugpa_value;
+        soci::indicator ugpa_ind;
+        std::string usubject_value;
+        soci::indicator usubject_ind;
+        int urole_int;
+
+        // Construct query with validated key
+        std::string query = "SELECT id, name, password, gpa, subject, role FROM " + table_name + " WHERE " + key + " = :value";
+
+        db << query,
+            soci::into(uid),
+            soci::into(uname),
+            soci::into(upass),
+            soci::into(ugpa_value, ugpa_ind),
+            soci::into(usubject_value, usubject_ind),
+            soci::into(urole_int),
+            soci::use(value);
+
+        std::optional<double> ugpa;
+        if (ugpa_ind == soci::i_ok)
+            ugpa = ugpa_value;
+
+        std::optional<std::string> usubject;
+        if (usubject_ind == soci::i_ok)
+            usubject = usubject_value;
+
+        UserRole role = static_cast<UserRole>(urole_int);
+        return User(uid, uname, upass, ugpa, usubject, role);
+
+    } catch (const soci::soci_error& e) {
+        std::cerr << "SOCI error while searching in table `" << table_name << "`: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Standard error while searching in table `" << table_name << "`: " << e.what() << std::endl;
     }
-    query += ") VALUES (";
 
-    std::vector<std::string> values = entity.get_values();
-    for (size_t i = 0; i < values.size(); i++) {
-        bool is_number = !values[i].empty() &&
-                         std::find_if(values[i].begin(),
-                                      values[i].end(),
-                                      [](unsigned char c) { return !std::isdigit(c) && c != '.'; }) == values[i].end();
-        if (columns[i] == "password")
-            query += "'" + hash(values[i]) + "'";
-        else if (!is_number)
-            query += "'" + values[i] + "'";
-        else
-            query += values[i];
-        if (i != values.size() - 1)
-            query += ", ";
-    }
-    query += ")";
-
-    if (mysql_query(conn, query.c_str())) {
-        std::cout << "Insert failed: " << mysql_error(conn) << std::endl;
-        return false;
-    }
-
-    return true;
+    return std::nullopt;
 }
 
-bool login(MYSQL *conn) {
-    std::cout << "---------- LOGIN ----------" << std::endl;
-    std::string username, password;
-    std::cout << "username: ";
-    std::cin >> username;
-    std::cout << "password: ";
-    std::cin >> password;
 
-    std::vector<std::string> res = search_db(conn, {{"name", username}, {"password", hash(password)}}, {"students", "teachers"});
-    for (const auto& row : res) {
-        std::cout << row << " ";
-    }
-    std::cout << std::endl;
-    return true;
-}
+bool insert_user(soci::session& db, const std::string& table_name, const User& user) {
+    try {
+        std::vector<std::string> cols = user.get_columns();
+        std::vector<std::string> values = user.get_values();
 
-std::string hash(std::string str) {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256((const unsigned char *) str.c_str(), str.size(), hash);
+        if (cols.size() != values.size()) {
+            std::cerr << "Values don't match columns\n";
+            return false;
+        }
 
-    std::stringstream ss;
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i)
-        ss << std::hex << std::setw(2) << std::setfill('0') << (int) hash[i];
+        std::string query = "INSERT INTO " + table_name + " (";
+        for (size_t i = 0; i < cols.size(); ++i) {
+            query += cols[i];
+            if (i < cols.size() - 1) query += ", ";
+        }
+        query += ") VALUES (";
+        for (size_t i = 0; i < cols.size(); ++i) {
+            query += "?";
+            if (i < cols.size() - 1) query += ", ";
+        }
+        query += ")";
 
-    return ss.str();
-}
+        soci::statement st = (db.prepare << query);
 
-void main_screen() {
-    std::cout << "Welcome to school database!" << std::endl;
-}
+        // Create vector of std::string references to bind
+        std::vector<std::reference_wrapper<const std::string>> refs;
+        for (auto& val : values) {
+            refs.push_back(std::cref(val));
+        }
 
-void print(MYSQL *conn, const std::string &table_name, std::vector<std::pair<std::string, std::string> > schema) {
-    std::string query = "SELECT * FROM " + table_name;
-    if (mysql_query(conn, query.c_str())) {
-        std::cerr << "SELECT error: " << mysql_error(conn) << std::endl;
-        return;
-    }
+        // Bind positionally
+        for (const auto& val_ref : refs) {
+            st.exchange(soci::use(val_ref.get()));
+        }
 
-    MYSQL_RES *result = mysql_store_result(conn);
-    if (!result) {
-        std::cerr << "mysql_store_result failed: " << mysql_error(conn) << std::endl;
-        return;
-    }
+        st.define_and_bind();
+        st.execute(true);
 
-    MYSQL_ROW row;
+        std::cout << "User \"" << user.get_name() << "\" inserted into `" << table_name << "` successfully.\n";
+        return true;
 
-
-    std::cout << "<----- " << table_name << " list ----->" << std::endl;
-    while (row = mysql_fetch_row(result)) {
-        for (int i = 0; i < schema.size(); i++)
-            std::cout << schema[i].first << ": " << row[i] << " ";
-        std::cout << std::endl;
+    } catch (const soci::soci_error& e) {
+        std::cerr << "SOCI error inserting user into table `" << table_name << "`: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Standard error inserting user into table `" << table_name << "`: " << e.what() << std::endl;
     }
 
-    std::cout << "<------------------------>" << std::endl;
-
-    mysql_free_result(result);
+    return false;
 }
+
+
 
 bool create_table(soci::session& db, const std::string& dbname, const std::string& table_name, const std::vector<std::pair<std::string, std::string>>& columns) {
     try {
@@ -105,9 +118,8 @@ bool create_table(soci::session& db, const std::string& dbname, const std::strin
         std::string query = "CREATE TABLE IF NOT EXISTS `" + dbname + "`.`" + table_name + "`";
 
         for (int i = 0; i < columns.size(); i++) {
-            query += "`" + columns[i].first + "` " + columns[i].second;
-            if (i < columns.size() - 1)
-                query += ", ";
+            query += (i == 0 ? " (" : ", ") + columns[i].first + " " + columns[i].second;
+            if (i == columns.size() - 1) query += ")";
         }
         query += ")";
 
@@ -124,14 +136,15 @@ bool create_table(soci::session& db, const std::string& dbname, const std::strin
 
 std::unique_ptr<soci::session> connect_to_db(const std::string& host, const std::string& user, const std::string& password, const std::string& database) {
     try {
-        // port is 3306 since it's in local. adjust to your parameters if needed
+        // port is 3306 for me. adjust to your parameters if needed
         auto sql = std::make_unique<soci::session> (
             soci::mysql,
             "db="+database
             + " user="+user
             + " password="+password
             + " host="+host
-            + " port=3306");
+            + " port=3306"
+            );
 
         return sql;
     } catch (const soci::soci_error& e) {
@@ -142,7 +155,7 @@ std::unique_ptr<soci::session> connect_to_db(const std::string& host, const std:
     return nullptr;
 }
 
-bool clear_all_tables(soci::session& db, const std::string dbname) {
+bool clear_all_tables(soci::session& db, const std::string& dbname) {
     try {
         soci::row row;
         soci::statement st = (db.prepare <<
@@ -152,7 +165,7 @@ bool clear_all_tables(soci::session& db, const std::string dbname) {
 
         st.execute();
         while (st.fetch()) {
-            std::string table = row.get<std::string>(0);
+            auto table = row.get<std::string>(0);
             try {
                 db << "DELETE FROM `" + table + "`";
                 std::cout << "Cleared table: " << table << std::endl;
@@ -170,7 +183,7 @@ bool clear_all_tables(soci::session& db, const std::string dbname) {
     return false;
 }
 
-bool drop_tables(soci::session db, const std::string dbname) {
+bool drop_tables(soci::session db, const std::string& dbname) {
     try {
         soci::row row;
         soci::statement st = (db.prepare <<
@@ -180,7 +193,7 @@ bool drop_tables(soci::session db, const std::string dbname) {
 
         st.execute();
         while (st.fetch()) {
-            std::string table = row.get<std::string>(0);
+            auto table = row.get<std::string>(0);
             try {
                 db << "DROP TABLE `" + table + "`";
                 std::cout << "Dropped table: " << table << std::endl;
@@ -196,4 +209,70 @@ bool drop_tables(soci::session db, const std::string dbname) {
         std::cerr << "Standard error: " << e.what() << std::endl;
     }
     return false;
+}
+
+std::string hash(const std::string& str) {
+    std::vector<unsigned char> hash(SHA256_DIGEST_LENGTH);
+    SHA256(reinterpret_cast<const unsigned char*>(str.c_str()), str.size(), hash.data());
+
+    std::stringstream ss;
+    for (unsigned char byte : hash)
+        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte);
+
+    return ss.str();
+}
+
+void print_table(soci::session& db, const std::string& table_name) {
+    try {
+        // Validate known table
+        if (table_name != "users") {
+            throw std::invalid_argument("Unsupported table: " + table_name);
+        }
+
+        soci::rowset<soci::row> rs = (db.prepare << "SELECT * FROM " + table_name);
+
+        std::cout << "Table: " << table_name << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
+
+        for (const auto& row : rs) {
+            for (std::size_t i = 0; i != row.size(); ++i) {
+                const soci::column_properties& props = row.get_properties(i);
+                std::cout << props.get_name() << ": ";
+
+                if (row.get_indicator(i) == soci::i_null) {
+                    std::cout << "NULL";
+                } else {
+                    switch (props.get_data_type()) {
+                        case soci::dt_string:
+                            std::cout << row.get<std::string>(i);
+                            break;
+                        case soci::dt_double:
+                            std::cout << row.get<double>(i);
+                            break;
+                        case soci::dt_integer:
+                            std::cout << row.get<int>(i);
+                            break;
+                        case soci::dt_long_long:
+                            std::cout << row.get<long long>(i);
+                            break;
+                        case soci::dt_unsigned_long_long:
+                            std::cout << row.get<unsigned long long>(i);
+                            break;
+                        default:
+                            std::cout << "[Unsupported Type]";
+                    }
+                }
+
+                std::cout << "\t";
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout << "----------------------------------------" << std::endl;
+
+    } catch (const soci::soci_error& e) {
+        std::cerr << "SOCI error while printing table `" << table_name << "`: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Standard error while printing table `" << table_name << "`: " << e.what() << std::endl;
+    }
 }

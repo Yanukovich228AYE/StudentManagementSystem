@@ -15,7 +15,10 @@ find_package(OpenSSL REQUIRED)
 add_executable(StudentManagementSystem src/main.cpp
         src/db.cpp
         src/db.h
-        include/User.h)
+        include/User.h
+        src/auth.h
+        include/libs.h
+        src/auth.cpp)
 
 target_link_libraries(StudentManagementSystem
         mariadb

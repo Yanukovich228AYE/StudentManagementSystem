@@ -24,6 +24,11 @@
 	"module-dir" : "/home/nikita/CLionProjects/StudentManagementSystem/cmake-build-debug/CMakeFiles/StudentManagementSystem.dir",
 	"sources" : 
 	{
+		"CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o" : 
+		{
+			"language" : "CXX",
+			"source" : "/home/nikita/CLionProjects/StudentManagementSystem/src/auth.cpp"
+		},
 		"CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o" : 
 		{
 			"language" : "CXX",

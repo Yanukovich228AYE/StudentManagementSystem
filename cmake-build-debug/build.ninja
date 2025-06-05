@@ -83,7 +83,24 @@ build CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o: CXX_COMPILER__Student
   OBJECT_FILE_DIR = CMakeFiles/StudentManagementSystem.dir/src
   dyndep = CMakeFiles/StudentManagementSystem.dir/CXX.dd
 
-build CMakeFiles/StudentManagementSystem.dir/CXX.dd | /home/nikita/CLionProjects/StudentManagementSystem/cmake-build-debug/CMakeFiles/StudentManagementSystem.dir/CXXModules.json CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o.modmap CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o.modmap: CXX_DYNDEP__StudentManagementSystem_Debug CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o.ddi CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o.ddi | /home/nikita/CLionProjects/StudentManagementSystem/cmake-build-debug/CMakeFiles/StudentManagementSystem.dir/CXXDependInfo.json
+build CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.ddi: CXX_SCAN__StudentManagementSystem_Debug /home/nikita/CLionProjects/StudentManagementSystem/src/auth.cpp || cmake_object_order_depends_target_StudentManagementSystem
+  DEP_FILE = CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.ddi.d
+  DYNDEP_INTERMEDIATE_FILE = CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.ddi
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/usr/include/mysql -I/usr/include/openssl -I/home/nikita/CLionProjects/StudentManagementSystem/include -I/usr/include/soci
+  OBJ_FILE = CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o
+  PREPROCESSED_OUTPUT_FILE = CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.ddi.i
+
+build CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o: CXX_COMPILER__StudentManagementSystem_scanned_Debug /home/nikita/CLionProjects/StudentManagementSystem/src/auth.cpp | CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.modmap || cmake_object_order_depends_target_StudentManagementSystem CMakeFiles/StudentManagementSystem.dir/CXX.dd
+  DEP_FILE = CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.d
+  DYNDEP_MODULE_MAP_FILE = CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.modmap
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/usr/include/mysql -I/usr/include/openssl -I/home/nikita/CLionProjects/StudentManagementSystem/include -I/usr/include/soci
+  OBJECT_DIR = CMakeFiles/StudentManagementSystem.dir
+  OBJECT_FILE_DIR = CMakeFiles/StudentManagementSystem.dir/src
+  dyndep = CMakeFiles/StudentManagementSystem.dir/CXX.dd
+
+build CMakeFiles/StudentManagementSystem.dir/CXX.dd | /home/nikita/CLionProjects/StudentManagementSystem/cmake-build-debug/CMakeFiles/StudentManagementSystem.dir/CXXModules.json CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o.modmap CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o.modmap CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.modmap: CXX_DYNDEP__StudentManagementSystem_Debug CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o.ddi CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o.ddi CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o.ddi | /home/nikita/CLionProjects/StudentManagementSystem/cmake-build-debug/CMakeFiles/StudentManagementSystem.dir/CXXDependInfo.json
 
 
 # =============================================================================
@@ -93,7 +110,7 @@ build CMakeFiles/StudentManagementSystem.dir/CXX.dd | /home/nikita/CLionProjects
 #############################################
 # Link the executable StudentManagementSystem
 
-build StudentManagementSystem: CXX_EXECUTABLE_LINKER__StudentManagementSystem_Debug CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o | /usr/lib/libcrypto.so /usr/lib/libssl.so /usr/lib/libcrypto.so
+build StudentManagementSystem: CXX_EXECUTABLE_LINKER__StudentManagementSystem_Debug CMakeFiles/StudentManagementSystem.dir/src/main.cpp.o CMakeFiles/StudentManagementSystem.dir/src/db.cpp.o CMakeFiles/StudentManagementSystem.dir/src/auth.cpp.o | /usr/lib/libcrypto.so /usr/lib/libssl.so /usr/lib/libcrypto.so
   DEP_FILE = CMakeFiles/StudentManagementSystem.dir/link.d
   FLAGS = -g
   LINK_FLAGS = -Wl,--dependency-file=CMakeFiles/StudentManagementSystem.dir/link.d

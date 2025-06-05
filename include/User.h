@@ -1,10 +1,7 @@
 #ifndef USER_H
 #define USER_H
 
-#include <string>
-#include <vector>
-#include <utility>
-#include <optional>
+#include "libs.h"
 
 enum UserRole {
     Student = 0,
@@ -15,35 +12,47 @@ enum UserRole {
 
 class User {
 private:
+    int id = -1;
     std::string name;
     std::string password;
-    std::optional<float> gpa;
+    std::optional<double> gpa;
     std::optional<std::string> subject;
-    UserRole role = UserRole::Student;
+    UserRole role;
 
 public:
     User() = default; // tell the compiler to generate desctructor automatically
 
-    User(std::string name, std::string password, UserRole role, std::optional<float> gpa = std::nullopt, std::optional<std::string> subject = std::nullopt)
-        : name(std::move(name)), password(std::move(password)), gpa(gpa), subject(subject), role(role) {}
+    User(int id = -1,
+     std::string name = "",
+     std::string password = "",
+     std::optional<double> gpa = std::nullopt,
+     std::optional<std::string> subject = std::nullopt,
+     UserRole role = Unknown)
+    : id(id), name(std::move(name)), password(std::move(password)),
+      gpa(gpa), subject(subject), role(role) {}
 
     // Accessors
     const std::string& get_name() const { return name; }
     const std::string& get_password() const { return password; }
-    std::optional<float> get_gpa() const { return gpa; }
+    std::optional<double> get_gpa() const { return gpa; }
     std::optional<std::string> get_subject() const { return subject; }
     UserRole get_role() const { return role; }
 
     void set_id(int new_id) { id = new_id; }
     int get_id() const { return id; }
 
-    const std::vector<std::string>& get_columns() {
-        return {"name", "password", "gpa", "subject", "role"};
+    std::vector<std::string> get_columns() const {
+        return {"id", "name", "password", "gpa", "subject", "role"};
     }
 
-    const std::vector<std::string>& get_values() {
+    std::vector<std::string> get_values() const {
         return {
-            ""
+            std::to_string(id),
+            "'" + name + "'",
+            "'" + password + "'",
+            gpa.has_value() ? std::to_string(gpa.value()) : "NULL",
+            subject.has_value() ?  "'" + subject.value() + "'" : "NULL",
+            "'" + std::to_string(static_cast<int>(role)) + "'"
         };
     }
 
@@ -56,6 +65,22 @@ public:
                 {"subject", "VARCHAR(50)"}, // can be null for students/admins
                 {"role", "INT NOT NULL"}
         };
+    }
+
+    static std::string role_to_string(UserRole role) {
+        switch (role) {
+            case Student: return "Student";
+            case Teacher: return "Teacher";
+            case Admin: return "Admin";
+            default: return "Unknown";
+        }
+    }
+
+    static UserRole string_to_role(const std::string& str) {
+        if (str == "Student" || str == "student") return Student;
+        if (str == "Teacher" || str == "teacher") return Teacher;
+        if (str == "Admin" || str == "admin") return Admin;
+        return Unknown;
     }
 };
 
